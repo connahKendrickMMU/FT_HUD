@@ -3,8 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "GameFramework/Actor.h"
-#include "CannonGame.generated.h"
+#include "GameFramework/Character.h"
+#include "Blueprint/UserWidget.h"
+#include "CannonCharacter.generated.h"
 
 UENUM(BlueprintType)
 enum class ShootingState : uint8 {
@@ -14,23 +15,26 @@ enum class ShootingState : uint8 {
 };
 
 UCLASS()
-class FT_HUD_API ACannonGame : public AActor
+class FT_HUD_API ACannonCharacter : public ACharacter
 {
 	GENERATED_BODY()
-	
-public:	
-	// Sets default values for this actor's properties
-	ACannonGame();
-	
+
+public:
+	// Sets default values for this character's properties
+	ACannonCharacter();
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
+	void UpdateValue(float* value, float DeltaTime);
 
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-public:
+	// Called to bind functionality to input
+	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
 	// shooting values
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float power = 0;
@@ -41,5 +45,13 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	ShootingState CurrentState = ShootingState::Power;
+
+	// this hold the template we will create
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category = "HUD")
+	TSubclassOf<UUserWidget> HUDType;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = "HUD")
+	UUserWidget* HUD;
+
 
 };
